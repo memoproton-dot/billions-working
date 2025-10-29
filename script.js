@@ -536,47 +536,104 @@ class BillionsFlow {
   }
 }
 
-// Initialize when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    const app = new BillionsFlow();
-    
-    // Set initial active step
-    const initialStep = document.querySelector('.step[data-step="1"]');
-    if (initialStep) {
-      initialStep.classList.add('is-active');
-    }
-    app.updateBackgroundScene();
-    
-    // Setup navigation click handlers
-    document.querySelectorAll('.progress-nav a').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const stepNum = parseInt(link.dataset.step);
-        const appInstance = window.__billionsAppInstance;
-        appInstance?.soundscape.playNavToggle();
-        app.scrollToStep(stepNum);
-      });
-    });
-  });
-} else {
+function initializeBillionsExperience() {
+  if (window.__billionsAppInstance) {
+    return window.__billionsAppInstance;
+  }
+
   const app = new BillionsFlow();
   window.__billionsAppInstance = app;
-  
-  // Set initial active step
+
   const initialStep = document.querySelector('.step[data-step="1"]');
-  if (initialStep) {
+  if (initialStep && !initialStep.classList.contains('is-active')) {
     initialStep.classList.add('is-active');
   }
   app.updateBackgroundScene();
-  
-  // Setup navigation click handlers
+
   document.querySelectorAll('.progress-nav a').forEach(link => {
+    if (link.dataset.navBound === 'true') {
+      return;
+    }
+
+    link.dataset.navBound = 'true';
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      const stepNum = parseInt(link.dataset.step);
+      const stepNum = parseInt(link.dataset.step, 10);
+      if (Number.isNaN(stepNum)) {
+        return;
+      }
+
       app.soundscape.playNavToggle();
       app.scrollToStep(stepNum);
     });
   });
+
+  return app;
+}
+
+function setupStartScreen() {
+  const startScreen = document.querySelector('.start-screen');
+  const startButton = startScreen?.querySelector('.start-screen__button');
+  const appShell = document.querySelector('.app');
+
+  if (!startScreen || !startButton || !appShell) {
+    initializeBillionsExperience();
+    return;
+  }
+
+  const revealApp = () => {
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+
+    appShell.classList.remove('app--intro-hidden');
+    appShell.removeAttribute('aria-hidden');
+
+    const appInstance = initializeBillionsExperience();
+    if (appInstance && typeof appInstance.scrollToStep === 'function') {
+      // Ensure navigation highlights reset to the first step after state restoration.
+      appInstance.activeStep = 1;
+      appInstance.updateNavigation();
+    }
+  };
+
+  const removeStartScreen = () => {
+    startScreen.removeEventListener('transitionend', removeStartScreen);
+    if (startScreen.parentNode) {
+      startScreen.parentNode.removeChild(startScreen);
+    }
+  };
+
+  startButton.addEventListener('click', () => {
+    if (startScreen.classList.contains('start-screen--closing')) {
+      return;
+    }
+
+    startButton.disabled = true;
+    startScreen.classList.add('start-screen--closing');
+    revealApp();
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      removeStartScreen();
+      return;
+    }
+
+    const fallbackTimeout = window.setTimeout(() => {
+      removeStartScreen();
+    }, 1000);
+
+    startScreen.addEventListener('transitionend', () => {
+      window.clearTimeout(fallbackTimeout);
+      removeStartScreen();
+    }, { once: true });
+  });
+}
+
+function onReady() {
+  setupStartScreen();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', onReady);
+} else {
+  onReady();
 }
