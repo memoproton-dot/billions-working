@@ -37,6 +37,192 @@ body {
   padding-top: 98px;
 }
 
+.app--intro-hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.start-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 6vw, 4rem);
+  background: radial-gradient(circle at 20% 20%, rgba(59, 245, 212, 0.18), transparent 55%),
+              radial-gradient(circle at 80% 80%, rgba(79, 168, 255, 0.18), transparent 60%),
+              linear-gradient(135deg, #020d16, #031c28 55%, #042635 100%);
+  animation: startScreenGradient 12s ease-in-out infinite alternate;
+  color: var(--text);
+  text-align: center;
+}
+
+.start-screen--closing {
+  opacity: 0;
+  transform: scale(1.035);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  pointer-events: none;
+}
+
+.start-screen__content {
+  position: relative;
+  z-index: 2;
+  max-width: min(540px, 90vw);
+  backdrop-filter: blur(18px);
+  background: rgba(3, 28, 38, 0.6);
+  border: 1px solid rgba(123, 240, 255, 0.16);
+  border-radius: 28px;
+  padding: clamp(2.5rem, 5vw, 3.5rem);
+  box-shadow: 0 28px 64px rgba(3, 28, 38, 0.55);
+}
+
+.start-screen__content::before {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(64, 214, 255, 0.18);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.start-screen__content h1 {
+  font-size: clamp(2.25rem, 6vw, 3.1rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.25rem;
+}
+
+.start-screen__tagline {
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  color: rgba(191, 239, 255, 0.85);
+  margin-bottom: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1.7;
+}
+
+.start-screen__button {
+  appearance: none;
+  border: none;
+  padding: 0.95rem 2.8rem;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #031a23;
+  background: linear-gradient(130deg, #3bf5d4 0%, #7bf0ff 48%, #4fa8ff 100%);
+  box-shadow: 0 15px 35px rgba(67, 225, 255, 0.38);
+  cursor: pointer;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
+}
+
+.start-screen__button:hover,
+.start-screen__button:focus-visible {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 22px 45px rgba(64, 214, 255, 0.42);
+  filter: brightness(1.05);
+}
+
+.start-screen__button:focus-visible {
+  outline: 3px solid rgba(123, 240, 255, 0.5);
+  outline-offset: 4px;
+}
+
+.start-screen__credits {
+  margin-top: clamp(2rem, 3.5vw, 2.75rem);
+  font-size: 0.95rem;
+  color: rgba(191, 239, 255, 0.75);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.start-screen__credits span {
+  display: inline-block;
+  margin: 0 0.35rem;
+  animation: startScreenPulse 1.8s ease-in-out infinite;
+}
+
+.start-screen__orb {
+  position: absolute;
+  width: clamp(220px, 40vw, 420px);
+  height: clamp(220px, 40vw, 420px);
+  border-radius: 50%;
+  filter: blur(0px);
+  opacity: 0.6;
+  mix-blend-mode: screen;
+  animation: startScreenOrbFloat 18s ease-in-out infinite;
+}
+
+.start-screen__orb--a {
+  top: -12vh;
+  left: -8vw;
+  background: radial-gradient(circle at 30% 30%, rgba(123, 240, 255, 0.65), transparent 65%);
+  animation-delay: -3s;
+}
+
+.start-screen__orb--b {
+  bottom: -16vh;
+  right: -10vw;
+  background: radial-gradient(circle at 70% 70%, rgba(79, 168, 255, 0.6), transparent 68%);
+  animation-delay: 4s;
+}
+
+@keyframes startScreenGradient {
+  0% {
+    background-position: 0% 0%, 100% 100%, 0% 0%;
+  }
+  100% {
+    background-position: 15% 20%, 85% 70%, 100% 100%;
+  }
+}
+
+@keyframes startScreenOrbFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate3d(3vw, -2vh, 0) scale(1.08);
+    opacity: 0.85;
+  }
+}
+
+@keyframes startScreenPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+@media (max-width: 600px) {
+  .start-screen__content {
+    padding: 2.25rem;
+  }
+
+  .start-screen__content::before {
+    inset: 12px;
+  }
+
+  .start-screen__button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .start-screen,
+  .start-screen__orb,
+  .start-screen__credits span {
+    animation: none;
+  }
+
+  .start-screen--closing {
+    transition-duration: 0.001s;
+  }
+}
+
 .background-canvas {
   position: fixed;
   inset: 0;
