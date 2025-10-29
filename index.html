@@ -10,7 +10,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="app">
+  <div class="start-screen" role="dialog" aria-modal="true" aria-labelledby="start-title">
+    <div class="start-screen__orb start-screen__orb--a" aria-hidden="true"></div>
+    <div class="start-screen__orb start-screen__orb--b" aria-hidden="true"></div>
+    <div class="start-screen__content">
+      <h1 id="start-title">Billions Network</h1>
+      <p class="start-screen__tagline">Step into the immersive 12-stage identity flow for trusted AI agents.</p>
+      <button type="button" class="start-screen__button">Start the Journey</button>
+      <p class="start-screen__credits">Made with <span role="img" aria-label="love">❤️</span> by Gigaboson</p>
+    </div>
+  </div>
+
+  <div class="app app--intro-hidden" aria-hidden="true">
     <div class="background-canvas" aria-hidden="true">
       <div class="background-scene background-scene--1 is-visible" data-step="1"></div>
       <div class="background-scene background-scene--2" data-step="2"></div>
