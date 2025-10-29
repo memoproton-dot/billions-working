@@ -563,7 +563,6 @@ function initializeBillionsExperience() {
         return;
       }
 
-      app.soundscape.playNavToggle();
       app.scrollToStep(stepNum);
     });
   });
